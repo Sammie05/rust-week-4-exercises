@@ -174,7 +174,6 @@ impl TryFrom<&[u8]> for LegacyTransaction {
             return Err(BitcoinError::InvalidTransaction);
         }
 
-        // Parse version (first 4 bytes)
         let version = i32::from_le_bytes(
             data.get(0..4)
                 .and_then(|bytes| bytes.try_into().ok())
@@ -183,13 +182,10 @@ impl TryFrom<&[u8]> for LegacyTransaction {
                 ))?,
         );
 
-        // Parse inputs count (byte at index 4)
         let inputs_count = data[4] as usize;
 
-        // Parse outputs count (byte at index 5)
         let outputs_count = data[5] as usize;
 
-        // Parse lock time (last 4 bytes)
         let lock_time = u32::from_le_bytes(
             data.get(data.len() - 4..)
                 .and_then(|bytes| bytes.try_into().ok())
@@ -198,7 +194,6 @@ impl TryFrom<&[u8]> for LegacyTransaction {
                 ))?,
         );
 
-        // Create dummy inputs and outputs based on counts
         let inputs = (0..inputs_count)
             .map(|_| TxInput {
                 previous_output: OutPoint {
